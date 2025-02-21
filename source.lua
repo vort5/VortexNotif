@@ -15,7 +15,8 @@ local THEME = {
     BACKGROUND = Color3.fromRGB(40, 30, 60),
     ACCENT = Color3.fromRGB(80, 60, 120),
     SECONDARY = Color3.fromRGB(60, 45, 90),
-    TEXT = Color3.fromRGB(255, 255, 255)
+    TEXT = Color3.fromRGB(255, 255, 255),
+    PROGRESS = Color3.fromRGB(120, 90, 180)
 }
 
 -- Active notifications
@@ -72,21 +73,6 @@ function NotificationLibrary:Notify(title, message, duration)
     UICorner.CornerRadius = UDim.new(0, 8)
     UICorner.Parent = NotificationFrame
     
-    -- Add shadow
-    local Shadow = Instance.new("ImageLabel")
-    Shadow.Name = "Shadow"
-    Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
-    Shadow.BackgroundTransparency = 1
-    Shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
-    Shadow.Size = UDim2.new(1, 24, 1, 24)
-    Shadow.ZIndex = -1
-    Shadow.Image = "rbxassetid://1316045217"
-    Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-    Shadow.ImageTransparency = 0.6
-    Shadow.ScaleType = Enum.ScaleType.Slice
-    Shadow.SliceCenter = Rect.new(10, 10, 118, 118)
-    Shadow.Parent = NotificationFrame
-    
     -- Create title
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Size = UDim2.new(1, -20, 0, 25)
@@ -124,6 +110,18 @@ function NotificationLibrary:Notify(title, message, duration)
     AccentCorner.CornerRadius = UDim.new(0, 8)
     AccentCorner.Parent = AccentLine
     
+    -- Create progress bar
+    local ProgressBar = Instance.new("Frame")
+    ProgressBar.Size = UDim2.new(0, 0, 0, 4)
+    ProgressBar.Position = UDim2.new(0, 0, 1, -4)
+    ProgressBar.BackgroundColor3 = THEME.PROGRESS
+    ProgressBar.BorderSizePixel = 0
+    ProgressBar.Parent = NotificationFrame
+
+    local ProgressCorner = Instance.new("UICorner")
+    ProgressCorner.CornerRadius = UDim.new(0, 8)
+    ProgressCorner.Parent = ProgressBar
+
     -- Add to active notifications
     table.insert(activeNotifications, {
         Frame = NotificationFrame,
@@ -140,6 +138,14 @@ function NotificationLibrary:Notify(title, message, duration)
         {Position = UDim2.new(1, -NOTIFICATION_WIDTH - PADDING, 0, NotificationFrame.Position.Y.Offset)}
     )
     slideIn:Play()
+    
+    -- Progress bar animation
+    local progressTween = TweenService:Create(
+        ProgressBar,
+        TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
+        {Size = UDim2.new(1, 0, 0, 4)}
+    )
+    progressTween:Play()
     
     -- Set up removal
     task.delay(duration, function()
