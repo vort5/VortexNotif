@@ -1,3 +1,5 @@
+-- made by vort.5 on discord
+
 local NotificationLibrary = {}
 
 local TweenService = game:GetService("TweenService")
